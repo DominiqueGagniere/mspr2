@@ -1,0 +1,15 @@
+secret:
+  enabled: true
+  create: false
+  name: cloud-config   
+
+storageClass:
+  enabled: true
+
+csi:
+  plugin:
+    volumes: []
+    volumeMounts:
+      - name: cloud-config
+        mountPath: /etc/config
+        readOnly: true

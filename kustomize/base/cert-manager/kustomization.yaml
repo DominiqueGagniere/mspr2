@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+namespace: cert-manager
+
+resources:
+  - ./resources/namespace.yaml
+  - ./resources/selfsigned-issuer.yaml
+  - ./resources/root-ca.yaml
+  - ./resources/ca-issuer.yaml

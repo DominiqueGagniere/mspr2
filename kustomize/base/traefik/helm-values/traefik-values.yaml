@@ -1,0 +1,19 @@
+deployment:
+  replicas: 2
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+providers:
+  kubernetesIngress:
+    enabled: true
+  kubernetesCRD:
+    enabled: true
+
+service:
+  type: LoadBalancer
+
+ingressRoute:
+  dashboard:
+    enabled: true
