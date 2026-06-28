@@ -1,0 +1,9 @@
+region             = ""
+flavor_cp          = ""
+flavor_worker      = ""
+talos_version      = ""
+talos_schematic_id = ""
+kubernetes_version = ""
+cluster_name       = ""
+ext_net_name       = ""
+allowed_cidrs      = ["0.0.0.0/0"]

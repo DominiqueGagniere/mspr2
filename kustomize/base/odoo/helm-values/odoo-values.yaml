@@ -1,0 +1,43 @@
+postgresql:
+  enabled: true
+  global:
+    security:
+      allowInsecureImages: true
+  image:
+    repository: bitnamilegacy/postgresql
+  auth:
+    database: odoo
+    username: odoo
+    existingSecret: odoo-postgresql-secret
+    secretKeys:
+      adminPasswordKey: postgresql-admin-password
+      userPasswordKey: postgresql-password
+  primary:
+    persistence:
+      enabled: true
+
+odoo:
+  init:
+    enabled: true
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: "ca-issuer"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  hosts:
+    - host: odoo.mspr2
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+  - secretName: odoo-tls-secret
+    hosts:
+      - odoo.mspr2

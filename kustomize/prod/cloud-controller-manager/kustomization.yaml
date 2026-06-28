@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+helmCharts:
+  - name: openstack-cloud-controller-manager
+    repo: https://kubernetes.github.io/cloud-provider-openstack
+    version: 2.36.0
+    releaseName: openstack-ccm
+    namespace: kube-system
+    valuesFile: ../../base/cloud-controller-manager/helm-values/cloud-controller-manager-values.yaml

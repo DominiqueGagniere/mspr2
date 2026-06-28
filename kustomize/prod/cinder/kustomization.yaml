@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kube-system
+
+resources:
+  - ./resources/cloud-config-secret.yaml
+  - ./resources/storageclass.yaml
+
+helmCharts:
+  - name: openstack-cinder-csi
+    repo: https://kubernetes.github.io/cloud-provider-openstack
+    version: 2.36.0
+    releaseName: cinder-csi
+    namespace: kube-system
+    valuesFile: ../../base/cinder/helm-values/cinder-values.yaml

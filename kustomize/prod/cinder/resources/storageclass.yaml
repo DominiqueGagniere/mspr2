@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-cinder-high-speed
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: cinder.csi.openstack.org
+parameters:
+  type: high-speed
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
