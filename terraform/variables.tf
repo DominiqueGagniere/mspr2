@@ -34,3 +34,9 @@ variable "allowed_cidrs" {
   type        = list(string)
   description = "CIDR autorisés pour l'API Talos et Kubernetes"
 }
+
+variable "k8s_network_name" {
+  type        = string
+  default     = "k8s-network"
+  description = "Nom du réseau privé vRack pour le LoadBalancer Octavia"
+}

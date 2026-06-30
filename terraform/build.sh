@@ -9,5 +9,4 @@ terraform output -raw talosconfig > talosconfig
 export TALOSCONFIG=$PWD/talosconfig
 export KUBECONFIG=$PWD/kubeconfig
 
-talosctl health
 kubectl get nodes -o wide
