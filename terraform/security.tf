@@ -44,3 +44,14 @@ resource "openstack_networking_secgroup_rule_v2" "cluster_internal_udp" {
   remote_group_id   = openstack_networking_secgroup_v2.talos.id
   security_group_id = openstack_networking_secgroup_v2.talos.id
 }
+
+# NodePorts accessibles depuis le réseau privé (LB Octavia)
+resource "openstack_networking_secgroup_rule_v2" "lb_nodeports" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 30000
+  port_range_max    = 32767
+  remote_ip_prefix  = "10.1.0.0/16"
+  security_group_id = openstack_networking_secgroup_v2.talos.id
+}
