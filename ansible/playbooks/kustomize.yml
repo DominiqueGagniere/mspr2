@@ -44,7 +44,7 @@
 
         - name: Wait for Odoo init Job to complete
           ansible.builtin.shell:
-            cmd: kubectl --kubeconfig {{ kubeconfig }} wait --for=condition=complete job --all -n default --timeout=300s
+            cmd: kubectl --kubeconfig {{ kubeconfig }} wait --for=condition=complete job --all -n default --timeout=600s
 
         - name: Disable Odoo init in values
           ansible.builtin.shell:
