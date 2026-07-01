@@ -4,6 +4,8 @@ namespace: default
 
 resources:
   - ./resources/postgres-secret.yaml
+  - ./resources/postgres-statefulset.yaml
+  - ./resources/postgres-service.yaml
 
 helmCharts:
   - name: odoo
