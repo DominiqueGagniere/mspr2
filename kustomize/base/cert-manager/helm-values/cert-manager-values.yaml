@@ -5,3 +5,7 @@ replicaCount: 1
 
 prometheus:
   enabled: false
+
+global:
+  leaderElection:
+    namespace: "cert-manager"

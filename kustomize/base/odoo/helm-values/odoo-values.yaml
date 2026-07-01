@@ -1,25 +1,22 @@
 postgresql:
-  enabled: true
-  global:
-    security:
-      allowInsecureImages: true
-  image:
-    repository: bitnamilegacy/postgresql
-  auth:
-    database: odoo
-    username: odoo
-    existingSecret: odoo-postgresql-secret
-    secretKeys:
-      adminPasswordKey: postgresql-admin-password
-      userPasswordKey: postgresql-password
-  primary:
-    persistence:
-      enabled: true
+  enabled: false
+
+externalDatabase:
+  host: odoo-postgresql
+  port: 5432
+  name: odoo
+  user: odoo
+  password: "changeme123!"
+
+replicaCount: 1
 
 odoo:
   init:
-    enabled: true
-
+    enabled: false
+    modules: base,web
+  update:
+    maintenancePage: false
+    
 autoscaling:
   enabled: false
   minReplicas: 1

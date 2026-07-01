@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - ./resources/cloud-config-secret.yaml
   - ./resources/storageclass.yaml
 
 helmCharts:
