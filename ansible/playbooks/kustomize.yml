@@ -1,0 +1,65 @@
+---
+- name: Deploy Kustomize manifests to K8s cluster
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tags: kustomize
+  vars:
+    kubeconfig: "{{ playbook_dir }}/../../terraform/kubeconfig"
+    kustomize_base: "{{ playbook_dir }}/../../kustomize/prod"
+    odoo_values: "{{ playbook_dir }}/../../kustomize/base/odoo/helm-values/odoo-values.yaml"
+  tasks:
+    - name: Deploy kubernetes services
+      ansible.builtin.shell:
+        cmd: |
+          kustomize build --enable-helm --load-restrictor=LoadRestrictionsNone {{ kustomize_base }}/{{ service }} | \
+          kubectl apply --kubeconfig {{ kubeconfig }} --server-side --force-conflicts -f -
+
+      retries: 5
+      delay: 5
+      when: (deploy_only is not defined or service == deploy_only) and not (service == 'odoo' and (odoo_init | default(false)))
+      loop:
+        - cloud-controller-manager
+        - cinder
+        - cert-manager
+        - traefik
+        - odoo
+      loop_control:
+        loop_var: service
+
+    - name: Deploy Odoo with init
+      when: (deploy_only is not defined or deploy_only == 'odoo') and (odoo_init | default(false))
+      block:
+        - name: Enable Odoo init in values
+          ansible.builtin.shell:
+            cmd: "sed -i '/init:/{n;s/enabled: false/enabled: true/}' {{ odoo_values }}"
+
+        - name: Deploy Odoo (init mode)
+          ansible.builtin.shell:
+            cmd: |
+              kustomize build --enable-helm --load-restrictor=LoadRestrictionsNone {{ kustomize_base }}/odoo | \
+              kubectl --kubeconfig {{ kubeconfig }} apply -f -
+          retries: 5
+          delay: 5
+
+        - name: Wait for Odoo init Job to complete
+          ansible.builtin.shell:
+            cmd: kubectl --kubeconfig {{ kubeconfig }} wait --for=condition=complete job --all -n default --timeout=300s
+
+        - name: Disable Odoo init in values
+          ansible.builtin.shell:
+            cmd: "sed -i '/init:/{n;s/enabled: true/enabled: false/}' {{ odoo_values }}"
+
+        - name: Redeploy Odoo (normal mode)
+          ansible.builtin.shell:
+            cmd: |
+              kustomize build --enable-helm --load-restrictor=LoadRestrictionsNone {{ kustomize_base }}/odoo | \
+              kubectl --kubeconfig {{ kubeconfig }} apply -f -
+          retries: 5
+          delay: 5
+
+        - name: Remove Odoo Helm test pod (rendered by helm template, never cleaned up)
+          ansible.builtin.shell:
+            cmd: >
+              kubectl --kubeconfig {{ kubeconfig }}
+              delete pod odoo-test-connection -n default --ignore-not-found
